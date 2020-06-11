@@ -22,7 +22,7 @@ class SkyGrab:
     def __init__(self, keys = auths):
         self.auths = keys
 
-    def get_sold_inventory(self, payload = None): #Sends GET request for sold inventory
+    def get_sold_inventory(self, payload = None): #Sends request for sold inventory
         default_payload = {"zoneSeating": "true",
         "invoiceDateFrom": SkyGrab.today.isoformat()[:-15] + "05:00:00.000",
         "invoiceDateTo": datetime.datetime.utcnow().isoformat(),
@@ -35,7 +35,7 @@ class SkyGrab:
     
     #s['rows'][0]['event']['venue']
 
-    def get_inventory(self, payload = None): #Sends GET request for unsold inventory
+    def get_inventory(self, payload = None): #Sendsrequest for unsold inventory
         if payload == None:
             raise Exception("No filters provided.")
         
@@ -47,7 +47,7 @@ class SkyGrab:
             return r.status_code
 
     @staticmethod
-    def format_data(invoices_json): #Cleans up the data into an array of strings as needed for the buying sheet. Most error-prone part of the code
+    def format_data(invoices_json): #Cleans up the data into an array of strings as needed for the buying sheet. Brittle
         events = []
         for i in invoices_json['rows']:
             event = [i["invoiceId"], i["event"]["name"], i["event"]["date"], i["event"]["venue"]["name"], i["section"],i["row"],i["seatNumbers"],i["quantity"]]
@@ -61,7 +61,7 @@ class SkyGrab:
          return r.json()
     
     
-    def get_vendors(self,payload=None):
+    def get_vendors(self,payload=None): #Update master vendors file
         r = requests.get(SkyGrab.base + "/vendors", params = {}, headers=self.auths)
         r = r.json()['rows']
         vendors = {}
@@ -108,7 +108,7 @@ class SkyGrab:
 
         return r
 
-
+#Schema below:
 
 """ dict_keys(['inHandDate', 'id', 
 'accountId', 'eventId', 'quantity', 'notes', 'section', 'row', 'secondRow', 'lowSeat', 'highSeat', 'cost', 'faceValue',
