@@ -31,7 +31,7 @@ class SkyGrab:
         payload = default_payload if payload == None else payload
 
         r = requests.get(SkyGrab.base +"/inventory/sold", params = payload, headers = self.auths)
-        return SkyGrab.format_data(r.json())
+        return r.json()['rows']
     
     #s['rows'][0]['event']['venue']
 
@@ -44,7 +44,7 @@ class SkyGrab:
             return r.json()
         except:
             print(r.status_code)
-            return r.status_code
+            return r
 
     @staticmethod
     def format_data(invoices_json): #Cleans up the data into an array of strings as needed for the buying sheet. Brittle
@@ -107,6 +107,23 @@ class SkyGrab:
         r = requests.post(url = SkyGrab.base + "/purchases", data = data, headers=self.auths)
 
         return r
+    
+    def get_purchases(self,params = dict()):
+        try:
+            r = requests.get(SkyGrab.base + "/purchases", params = params, headers=self.auths)
+            r = r.json()['rows']
+            return r
+        except:
+            r.status_code
+    
+    def get_invoices(self,params = dict()):
+        try:
+            r = requests.get(SkyGrab.base + "/invoices", params = params, headers=self.auths)
+            r = r.json()['rows']
+            return r
+        except:
+            r.status_code
+
 
 #Schema below:
 
