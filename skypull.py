@@ -31,7 +31,11 @@ class SkyGrab:
         payload = default_payload if payload == None else payload
 
         r = requests.get(SkyGrab.base +"/inventory/sold", params = payload, headers = self.auths)
-        return r.json()['rows']
+        try:
+            return r.json()['rows']
+        except:
+            print(r.status_code)
+            return r
     
     #s['rows'][0]['event']['venue']
 
