@@ -26,6 +26,12 @@ class SkyGrab:
     def get_events(self, params=None):
         if params == None:
             raise Exception("No parameters specified")
+        r = requests.get(SkyGrab.base + "/events",
+                         params=params, headers=self.auths)
+        try:
+            return r.json()['rows']
+        except:
+            return r.status_code
 
     def get_sold_inventory(self, params=None):  # Sends request for sold inventory
         default_params = {"zoneSeating": "true",
@@ -33,24 +39,24 @@ class SkyGrab:
                           "invoiceDateTo": datetime.datetime.utcnow().isoformat(),
                           "state": "NY",
                           "fulfillmentStatus": "PENDING"}
-        payrams = default_params if params == None else params
+        params = default_params if params == None else params
         r = requests.get(SkyGrab.base + "/inventory/sold",
                          params=params, headers=self.auths)
         try:
-            return r.json()
+            return r.json()['rows']
         except:
             return r.status_code
 
     # s['rows'][0]['event']['venue']
 
-    def get_inventory(self, payload=None):  # Sendsrequest for unsold inventory
+    def get_inventory(self, params=None):  # Sendsrequest for unsold inventory
         if params == None:
             raise Exception("No filters provided.")
 
         r = requests.get(SkyGrab.base + "/inventory",
                          params=params, headers=self.auths)
         try:
-            return r.json()
+            return r.json()['rows']
         except:
             print(r.status_code)
             return r.status_code
@@ -70,7 +76,7 @@ class SkyGrab:
         r = requests.put(SkyGrab.base + "/inventory/bulk-update",
                          data=json.dumps(payload), headers=self.auths)
 
-        return r.json()
+        return r.json()['rows']
 
     def get_vendors(self, payload=None):  # Update master vendors file
         r = requests.get(SkyGrab.base + "/vendors",
