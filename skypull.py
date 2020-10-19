@@ -45,6 +45,7 @@ class SkyGrab:
         try:
             return r.json()['rows']
         except:
+            print('Error')
             return r.status_code
 
     # s['rows'][0]['event']['venue']
@@ -82,17 +83,18 @@ class SkyGrab:
         r = requests.get(SkyGrab.base + "/vendors",
                          params={}, headers=self.auths)
         r = r.json()['rows']
-        vendors = {}
+        vendors = []
         for i in r:
-            vendors[i['displayName']] = {
+            vendor = {
                 "venue": i['displayName'],
                 "id": i['id'],
                 'type': i['type'],
                 'city': i['address']['city'],
                 'state': i['address']['state']}
+            vendors.append(vendor)
         with open("skybox_vendors.json", "w") as f:
             json.dump(vendors, f)
-        return 1
+        return vendors
 
     def get_vendorID(self, vendor):
         if SkyGrab.vendors == {}:
