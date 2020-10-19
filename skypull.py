@@ -73,6 +73,9 @@ class SkyGrab:
         return r.json()
 
     # test
+    def hello():
+        pass
+
     def get_vendors(self, payload=None):  # Update master vendors file
         r = requests.get(SkyGrab.base + "/vendors",
                          params={}, headers=self.auths)
