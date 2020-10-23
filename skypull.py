@@ -49,7 +49,7 @@ class SkyGrab:
 
     def get_sold_inventory(self, params=None):  # Sends request for sold inventory
         default_params = {"zoneSeating": "true",
-                          "invoiceDateFrom": SkyGrab.today - datetime.timedelta(days=365),
+                          "invoiceDateFrom": (SkyGrab.today - datetime.timedelta(days=365)).isoformat(),
                           "invoiceDateTo": datetime.datetime.utcnow().isoformat(),
                           "state": "NY",
                           "fulfillmentStatus": "PENDING"}
@@ -65,8 +65,10 @@ class SkyGrab:
     # s['rows'][0]['event']['venue']
 
     def get_inventory(self, params=None):  # Sendsrequest for unsold inventory
-        if params == None:
-            raise Exception("No filters provided.")
+        default_params = {
+            "createdDateFrom": (SkyGrab.today - datetime.timedelta(days=365)).isoformat(),
+            "createdDateTo": datetime.datetime.utcnow().isoformat(), "}
+        params = default_params if params == None else params
 
         r = requests.get(SkyGrab.base + "/inventory",
                          params=params, headers=self.auths)
@@ -74,7 +76,8 @@ class SkyGrab:
             return r.json()['rows']
         except:
             print(r.status_code)
-            return r.status_code
+            print(r.content)
+            return list()
 
     @staticmethod
     # Cleans up the data into an array of strings as needed for the buying sheet. Brittle
