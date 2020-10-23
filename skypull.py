@@ -33,6 +33,20 @@ class SkyGrab:
         except:
             return r.status_code
 
+    def get_invoices(self, params=None):
+        default_params = {"createdDateFrom": (SkyGrab.today - datetime.timedelta(days=365)).isoformat(),
+                          "createdDateTo": datetime.datetime.utcnow().isoformat(),
+                          }
+        params = default_params if params == None else params
+        r = requests.get(SkyGrab.base + "/invoices",
+                         params=params, headers=self.auths)
+        try:
+            return r.json()['rows']
+        except:
+            print(r.status_code)
+            print(r.content)
+            return list()
+
     def get_sold_inventory(self, params=None):  # Sends request for sold inventory
         default_params = {"zoneSeating": "true",
                           "invoiceDateFrom": SkyGrab.today - datetime.timedelta(days=365),
@@ -83,18 +97,7 @@ class SkyGrab:
         r = requests.get(SkyGrab.base + "/vendors",
                          params={}, headers=self.auths)
         r = r.json()['rows']
-        vendors = []
-        for i in r:
-            vendor = {
-                "venue": i['displayName'],
-                "id": i['id'],
-                'type': i['type'],
-                'city': i['address']['city'],
-                'state': i['address']['state']}
-            vendors.append(vendor)
-        with open("skybox_vendors.json", "w") as f:
-            json.dump(vendors, f)
-        return vendors
+        return r
 
     def get_vendorID(self, vendor):
         if SkyGrab.vendors == {}:
