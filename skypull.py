@@ -6,7 +6,7 @@ import json
 with open("skybox_secrets.json", "r+") as f:
     secrets = json.load(f)["SKYBOX_SECRETS"]
 
-# Default Authorizations, Should be passed in CLI Args
+# Default Authorizations, Should be passed in CLI Args, Fix this later when environment permits
 auths = {"X-Account": secrets["X-Account"],  # Account ID
          "X-Api-Token": secrets["X-Api-Token"],  # Internal API Key
          # Registered App Token
@@ -17,7 +17,7 @@ auths = {"X-Account": secrets["X-Account"],  # Account ID
 class SkyGrab:
 
     base = "https://skybox.vividseats.com/services"
-    today = datetime.datetime.now()  # Grab Date through DateTime Library
+    today = datetime.datetime.now()
     vendors = {}
 
     def __init__(self, keys=auths):
@@ -30,7 +30,7 @@ class SkyGrab:
                          params=params, headers=self.auths)
         try:
             return r.json()['rows']
-        except:
+        except Exception:
             return r.status_code
 
     def get_invoices(self, params=None):
@@ -42,10 +42,8 @@ class SkyGrab:
                          params=params, headers=self.auths)
         try:
             return r.json()['rows']
-        except:
-            print(r.status_code)
-            print(r.content)
-            return list()
+        except Exception:
+            return r.status_code
 
     def get_sold_inventory(self, params=None):  # Sends request for sold inventory
         default_params = {"zoneSeating": "true",
@@ -58,8 +56,7 @@ class SkyGrab:
                          params=params, headers=self.auths)
         try:
             return r.json()['rows']
-        except:
-            print('Error')
+        except Exception:
             return r.status_code
 
     # s['rows'][0]['event']['venue']
@@ -74,10 +71,8 @@ class SkyGrab:
                          params=params, headers=self.auths)
         try:
             return r.json()['rows']
-        except:
-            print(r.status_code)
-            print(r.content)
-            return list()
+        except Exception:
+            return r.status_code
 
     @staticmethod
     # Cleans up the data into an array of strings as needed for the buying sheet. Brittle
@@ -93,8 +88,10 @@ class SkyGrab:
     def change_inventory(self, payload):
         r = requests.put(SkyGrab.base + "/inventory/bulk-update",
                          data=json.dumps(payload), headers=self.auths)
-
-        return r.json()['rows']
+        try:
+            return r.json()['rows']
+        except Exception:
+            return r.status_code
 
     def get_vendors(self, payload=None):  # Update master vendors file
         r = requests.get(SkyGrab.base + "/vendors",
@@ -102,7 +99,8 @@ class SkyGrab:
         r = r.json()['rows']
         return r
 
-    def get_vendorID(self, vendor):
+    @staticmethod
+    def get_vendorID(vendor):
         if SkyGrab.vendors == {}:
             with open("skybox_vendors.json") as f:
                 SkyGrab.vendors = json.load(f)
@@ -112,7 +110,7 @@ class SkyGrab:
         else:
             return None
 
-    # Bad Name, Fix this!!
+    # Bad Name & Usage, Fix this!!
     def get_eventID(self, event_info):
         params = {"eventDateFrom": event_info["event_date"].isoformat(),
                   "eventDateTo": (event_info['event_date'] + datetime.timedelta(minutes=15)).isoformat(),
@@ -131,11 +129,9 @@ class SkyGrab:
 
     def post_purchase(self, purchase_info):
         data = json.dumps(purchase_info)
-        print(data)
         r = requests.post(url=SkyGrab.base + "/purchases",
                           data=data, headers=self.auths)
-
-        return r
+        return r.status_code
 
 # Schema below:
 
