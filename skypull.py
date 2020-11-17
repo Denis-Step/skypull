@@ -67,7 +67,7 @@ class SkyGrab:
     def get_inventory(self, params=None):  # Sendsrequest for unsold inventory
         default_params = {
             "createdDateFrom": (SkyGrab.today - datetime.timedelta(days=365)).isoformat(),
-            "createdDateTo": datetime.datetime.utcnow().isoformat(), "}
+            "createdDateTo": datetime.datetime.utcnow().isoformat()}
         params = default_params if params == None else params
 
         r = requests.get(SkyGrab.base + "/inventory",
