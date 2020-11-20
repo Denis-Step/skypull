@@ -96,8 +96,10 @@ class SkyGrab:
     def get_vendors(self, payload=None):  # Update master vendors file
         r = requests.get(SkyGrab.base + "/vendors",
                          params={}, headers=self.auths)
-        r = r.json()['rows']
-        return r
+        try:
+            return r.json()['rows']
+        except Exception:
+            return r.status_code
 
     @staticmethod
     def get_vendorID(vendor):
