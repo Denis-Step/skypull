@@ -47,7 +47,7 @@ class SkyGrab:
 
     def get_sold_inventory(self, params=None):  # Sends request for sold inventory
         default_params = {"zoneSeating": "true",
-                          "invoiceDateFrom": (SkyGrab.today - datetime.timedelta(days=365)).isoformat(),
+                          "invoiceDateFrom": (SkyGrab.today - datetime.timedelta(days=30)).isoformat(),
                           "invoiceDateTo": datetime.datetime.utcnow().isoformat(),
                           "state": "NY",
                           "fulfillmentStatus": "PENDING"}
@@ -63,9 +63,9 @@ class SkyGrab:
 
     def get_inventory(self, params=None):  # Sendsrequest for unsold inventory
         default_params = {
-            "createdDateFrom": (SkyGrab.today - datetime.timedelta(days=365)).isoformat(),
+            "createdDateFrom": (SkyGrab.today - datetime.timedelta(days=1)).isoformat(),
             "createdDateTo": datetime.datetime.utcnow().isoformat()}
-        params = default_params if params == None else params
+        params = default_params if params is None else params
 
         r = requests.get(SkyGrab.base + "/inventory",
                          params=params, headers=self.auths)
