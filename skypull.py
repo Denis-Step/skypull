@@ -101,17 +101,6 @@ class SkyGrab:
         except Exception:
             return r.status_code
 
-    @staticmethod
-    def get_vendorID(vendor):
-        if SkyGrab.vendors == {}:
-            with open("skybox_vendors.json") as f:
-                SkyGrab.vendors = json.load(f)
-
-        if vendor in SkyGrab.vendors:
-            return SkyGrab.vendors[vendor]['id']
-        else:
-            return None
-
     # Bad Name & Usage, Fix this!!
     def get_eventID(self, event_info):
         params = {"eventDateFrom": event_info["event_date"].isoformat(),
