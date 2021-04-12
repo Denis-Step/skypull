@@ -28,7 +28,8 @@ class SkyGrab:
     def get_events(self, params=None):
         if params is None:
             raise Exception("No parameters specified")
-        r = requests.get(SkyGrab.base + "/events", params=params, headers=self.auths)
+        r = requests.get(SkyGrab.base + "/events",
+                         params=params, headers=self.auths)
         try:
             return r.json()["rows"]
         except Exception:
@@ -42,7 +43,8 @@ class SkyGrab:
             "createdDateTo": datetime.datetime.utcnow().isoformat(),
         }
         params = default_params if params == None else params
-        r = requests.get(SkyGrab.base + "/invoices", params=params, headers=self.auths)
+        r = requests.get(SkyGrab.base + "/invoices",
+                         params=params, headers=self.auths)
         try:
             return r.json()["rows"]
         except Exception:
@@ -51,9 +53,9 @@ class SkyGrab:
     # Sends request for sold inventory
     def get_sold_inventory(self, params=None):
         default_params = {
-            "zoneSeating": "true",
+            "zoneSeating": "false",
             "invoiceDateFrom": (
-                SkyGrab.today - datetime.timedelta(days=30)
+                SkyGrab.today - datetime.timedelta(days=7)
             ).isoformat(),
             "invoiceDateTo": datetime.datetime.utcnow().isoformat(),
             "state": "NY",
@@ -77,7 +79,8 @@ class SkyGrab:
         }
         params = default_params if params is None else params
 
-        r = requests.get(SkyGrab.base + "/inventory", params=params, headers=self.auths)
+        r = requests.get(SkyGrab.base + "/inventory",
+                         params=params, headers=self.auths)
         try:
             return r.json()["rows"]
         except Exception:
@@ -114,7 +117,8 @@ class SkyGrab:
             return r.status_code
 
     def get_vendors(self, payload=None):  # Update master vendors file
-        r = requests.get(SkyGrab.base + "/vendors", params={}, headers=self.auths)
+        r = requests.get(SkyGrab.base + "/vendors",
+                         params={}, headers=self.auths)
         try:
             return r.json()["rows"]
         except Exception:
@@ -132,7 +136,8 @@ class SkyGrab:
             "excludeParking": "True",
             "venue": event_info["venue"],
         }
-        r = requests.get(SkyGrab.base + "/events", params=params, headers=self.auths)
+        r = requests.get(SkyGrab.base + "/events",
+                         params=params, headers=self.auths)
 
         if r.json()["rowCount"] == 1:
             return r.json()["rows"][0]["id"]
@@ -160,7 +165,8 @@ class SkyGrab:
         }
         params = default_params if params is None else params
 
-        r = requests.get(SkyGrab.base + "/purchases", params=params, headers=self.auths)
+        r = requests.get(SkyGrab.base + "/purchases",
+                         params=params, headers=self.auths)
         try:
             return r.json()["rows"]
         except Exception:
